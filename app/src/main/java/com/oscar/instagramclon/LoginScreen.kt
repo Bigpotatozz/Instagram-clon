@@ -11,9 +11,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,10 +24,12 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,13 +89,17 @@ fun Body(modifier: Modifier){
             println(correo)
             println(password)
         };
+        Spacer(Modifier.size(8.dp))
+        LoginDivider()
+        FacebookLogin(Modifier.align(Alignment.CenterHorizontally));
+
     }
 }
 
 @Composable
 fun Email(correo: String, onValueChange: (String) -> Unit){
         OutlinedTextField(value = correo, onValueChange = {onValueChange(it)}, label = {
-            Text("Correo electronico")
+            Text("Email")
         },
             modifier = Modifier.fillMaxWidth())
 }
@@ -98,7 +107,7 @@ fun Email(correo: String, onValueChange: (String) -> Unit){
 @Composable
 fun Password(password: String, onValueChange: (String) -> Unit){
     OutlinedTextField(value = password, onValueChange = {onValueChange(it)}, label = {
-        Text("Contraseña")
+        Text("Password")
     },
         modifier = Modifier.fillMaxWidth())
 
@@ -125,7 +134,32 @@ fun LogInButton(modifier: Modifier, onClick: () -> Unit ){
         onClick = {
             onClick()
         }) {
-        Text("Iniciar sesion")
+        Text("Log In")
+    }
+
+}
+
+@Composable
+fun LoginDivider(){
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        HorizontalDivider(Modifier.background(Color(0xFFF9F9F9)).height(1.dp).weight(1f))
+        Text("OR", Modifier.padding(6.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB5B5B5))
+        HorizontalDivider(Modifier.background(Color(0xFFF9F9F9)).height(1.dp).weight(1f))
+    }
+}
+
+@Composable
+fun FacebookLogin(modifier: Modifier){
+
+    TextButton(onClick = {}, modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(painter = painterResource(id = R.drawable.fb),
+                contentDescription = "Facebook",
+                Modifier.size(20.dp))
+            Spacer(Modifier.size(5.dp))
+            Text("Continue with facebook", fontSize = 14.sp,
+                fontWeight = FontWeight.Bold)
+        }
     }
 
 }
