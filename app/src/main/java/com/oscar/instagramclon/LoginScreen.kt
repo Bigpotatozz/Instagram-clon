@@ -2,6 +2,7 @@ package com.oscar.instagramclon
 
 import android.app.Activity
 import android.graphics.Paint.Align
+import android.util.Patterns
 import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -19,13 +20,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -43,6 +48,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +62,7 @@ fun LoginScreen(modifier: Modifier = Modifier){
     Box(modifier.fillMaxSize().padding(8.dp)){
         Header(Modifier.align(Alignment.TopEnd));
         Body(Modifier.align(Alignment.Center))
+        Footer(Modifier.align(Alignment.BottomEnd))
 
     }
 }
@@ -73,6 +82,7 @@ fun Header(modifier: Modifier){
 fun Body(modifier: Modifier){
     var correo by rememberSaveable { mutableStateOf("")}
     var password by rememberSaveable { mutableStateOf("")}
+    var validacionLogin by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier){
 
@@ -80,12 +90,17 @@ fun Body(modifier: Modifier){
             contentDescription = "Instagram",
             alignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth())
-        Email(correo = correo, onValueChange = { correo = it})
+        Email(correo = correo, onValueChange = {
+            correo = it
+            validacionLogin = enableLoginButton(correo, password)})
         Spacer(Modifier.size(4.dp))
-        Password(password = password, onValueChange = {password = it})
+        Password(password = password, onValueChange = {
+            password = it
+            validacionLogin = enableLoginButton(correo, password)
+        })
         Spacer(Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
-        LogInButton(modifier){
+        LogInButton(modifier, loginValidation = validacionLogin){
             println(correo)
             println(password)
         };
@@ -101,15 +116,40 @@ fun Email(correo: String, onValueChange: (String) -> Unit){
         OutlinedTextField(value = correo, onValueChange = {onValueChange(it)}, label = {
             Text("Email")
         },
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth(),
+            maxLines = 1,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        )
 }
 
 @Composable
 fun Password(password: String, onValueChange: (String) -> Unit){
+
+    var visible by rememberSaveable { mutableStateOf(false) }
+
     OutlinedTextField(value = password, onValueChange = {onValueChange(it)}, label = {
         Text("Password")
     },
-        modifier = Modifier.fillMaxWidth())
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = 1,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        trailingIcon = {
+            val imagen = if(visible){
+                Icons.Filled.VisibilityOff
+            }else{
+                Icons.Filled.Visibility
+            }
+
+            IconButton(onClick = {visible = !visible}) {
+                Icon(imagen, contentDescription = "mostrar/ocultar")
+            }
+        },
+        visualTransformation = if(visible)
+        {VisualTransformation.None}
+        else
+        {PasswordVisualTransformation()})
 
 }
 
@@ -124,13 +164,15 @@ fun ForgotPassword(modifier: Modifier){
 }
 
 @Composable
-fun LogInButton(modifier: Modifier, onClick: () -> Unit ){
+fun LogInButton(modifier: Modifier,  loginValidation: Boolean, onClick: () -> Unit ){
 
     OutlinedButton(modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(5.dp),
         border = BorderStroke(1.dp, Color.Transparent),
-        colors = ButtonColors(contentColor = Color.White, containerColor = Color(0xFF4EA8E9),
-            disabledContentColor = Color.Gray, disabledContainerColor = Color.Cyan),
+        enabled = loginValidation,
+        colors = ButtonColors(
+            contentColor = Color.White, containerColor = Color(0xFF4EA8E9),
+            disabledContentColor = Color.White, disabledContainerColor = Color.Gray),
         onClick = {
             onClick()
         }) {
@@ -142,9 +184,9 @@ fun LogInButton(modifier: Modifier, onClick: () -> Unit ){
 @Composable
 fun LoginDivider(){
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        HorizontalDivider(Modifier.background(Color(0xFFF9F9F9)).height(1.dp).weight(1f))
+        HorizontalDivider(Modifier.background(Color.Black).height(1.dp).weight(1f))
         Text("OR", Modifier.padding(6.dp), fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFB5B5B5))
-        HorizontalDivider(Modifier.background(Color(0xFFF9F9F9)).height(1.dp).weight(1f))
+        HorizontalDivider(Modifier.background(Color.Black).height(1.dp).weight(1f))
     }
 }
 
@@ -158,8 +200,35 @@ fun FacebookLogin(modifier: Modifier){
                 Modifier.size(20.dp))
             Spacer(Modifier.size(5.dp))
             Text("Continue with facebook", fontSize = 14.sp,
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold,
+                color = Color.Black)
         }
     }
 
+}
+
+//EMPIEZA FOOTER
+@Composable
+fun Footer(modifier: Modifier){
+
+    Column(modifier.padding(bottom = 30.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        HorizontalDivider(Modifier.background(Color.Black).height(1.dp));
+        Row (verticalAlignment = Alignment.CenterVertically){
+            Text("Don't have an account?",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(end = 6.dp))
+            Text("Sign Up",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4EA8E9))
+
+        }
+
+    }
+}
+
+//VALIDACIONES DE LOS INPUTS
+fun enableLoginButton(email: String, password: String): Boolean {
+    return Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
 }

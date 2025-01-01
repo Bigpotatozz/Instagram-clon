@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.oscar.instagramclon"
-        minSdk = 35
+        minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.compose.material:material-icons-extended:1.7.6")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
