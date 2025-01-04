@@ -8,11 +8,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.oscar.instagramclon.login.ui.LoginScreen
+import com.oscar.instagramclon.login.ui.LoginViewModel
 import com.oscar.instagramclon.ui.theme.InstagramClonTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             InstagramClonTheme {
                 Scaffold(modifier = Modifier.fillMaxSize().background(Color.White)) { innerPadding ->
-                    LoginScreen(Modifier.padding(innerPadding))
+                    LoginScreen(Modifier.padding(innerPadding), LoginViewModel())
                 }
             }
         }

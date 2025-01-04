@@ -1,15 +1,10 @@
-package com.oscar.instagramclon
+package com.oscar.instagramclon.login.ui
 
 import android.app.Activity
-import android.graphics.Paint.Align
-import android.util.Patterns
-import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,8 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,31 +30,29 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.oscar.instagramclon.R
 
-@Preview(showBackground = true)
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier){
+fun LoginScreen(modifier: Modifier = Modifier, loginViewModel: LoginViewModel){
 
     Box(modifier.fillMaxSize().padding(8.dp)){
         Header(Modifier.align(Alignment.TopEnd));
-        Body(Modifier.align(Alignment.Center))
+        Body(Modifier.align(Alignment.Center), loginViewModel)
         Footer(Modifier.align(Alignment.BottomEnd))
 
     }
@@ -79,10 +70,11 @@ fun Header(modifier: Modifier){
 
 //INICIO DE SESION
 @Composable
-fun Body(modifier: Modifier){
-    var correo by rememberSaveable { mutableStateOf("")}
-    var password by rememberSaveable { mutableStateOf("")}
-    var validacionLogin by rememberSaveable { mutableStateOf(false) }
+fun Body(modifier: Modifier, loginViewModel: LoginViewModel){
+    //SUCRIBIRSE AL VIEWMODEL
+    val correo: String by loginViewModel.email.observeAsState(initial = "");
+    val password: String by loginViewModel.password.observeAsState(initial = "");
+    val validacionLogin: Boolean by loginViewModel.loginEnabled.observeAsState(initial = false);
 
     Column(modifier){
 
@@ -91,12 +83,11 @@ fun Body(modifier: Modifier){
             alignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth())
         Email(correo = correo, onValueChange = {
-            correo = it
-            validacionLogin = enableLoginButton(correo, password)})
+            loginViewModel.onLoginChanged(it, password);
+        })
         Spacer(Modifier.size(4.dp))
         Password(password = password, onValueChange = {
-            password = it
-            validacionLogin = enableLoginButton(correo, password)
+            loginViewModel.onLoginChanged(correo, it);
         })
         Spacer(Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
@@ -228,7 +219,3 @@ fun Footer(modifier: Modifier){
     }
 }
 
-//VALIDACIONES DE LOS INPUTS
-fun enableLoginButton(email: String, password: String): Boolean {
-    return Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
-}
