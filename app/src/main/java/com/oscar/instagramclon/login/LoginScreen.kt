@@ -1,6 +1,7 @@
-package com.oscar.instagramclon.login.ui
+package com.oscar.instagramclon.login
 
 import android.app.Activity
+import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oscar.instagramclon.R
@@ -91,10 +93,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel){
         })
         Spacer(Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
-        LogInButton(modifier, loginValidation = validacionLogin){
-            println(correo)
-            println(password)
-        };
+        LogInButton(modifier, validacionLogin, loginViewModel)
         Spacer(Modifier.size(8.dp))
         LoginDivider()
         FacebookLogin(Modifier.align(Alignment.CenterHorizontally));
@@ -155,7 +154,7 @@ fun ForgotPassword(modifier: Modifier){
 }
 
 @Composable
-fun LogInButton(modifier: Modifier,  loginValidation: Boolean, onClick: () -> Unit ){
+fun LogInButton(modifier: Modifier,  loginValidation: Boolean, loginViewModel: LoginViewModel){
 
     OutlinedButton(modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(5.dp),
@@ -165,7 +164,8 @@ fun LogInButton(modifier: Modifier,  loginValidation: Boolean, onClick: () -> Un
             contentColor = Color.White, containerColor = Color(0xFF4EA8E9),
             disabledContentColor = Color.White, disabledContainerColor = Color.Gray),
         onClick = {
-            onClick()
+            loginViewModel.onLoginSelected();
+
         }) {
         Text("Log In")
     }

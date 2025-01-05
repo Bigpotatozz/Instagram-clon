@@ -1,11 +1,18 @@
-package com.oscar.instagramclon.login.ui
+package com.oscar.instagramclon.login
 
+import android.hardware.biometrics.BiometricManager.Strings
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.oscar.instagramclon.login.domain.LoginUseCase
+import kotlinx.coroutines.launch
 
 class LoginViewModel: ViewModel() {
+
+    val loginUseCase = LoginUseCase();
+
 
     private val _email = MutableLiveData<String>();
     var email: LiveData<String> = _email;
@@ -23,7 +30,18 @@ class LoginViewModel: ViewModel() {
 
     //VALIDACIONES DE LOS INPUTS
     fun enableLoginButton(email: String, password: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 5
+    }
+
+
+    fun onLoginSelected(){
+        viewModelScope.launch {
+            val resultado = loginUseCase.loginInvoke()
+            println(resultado)
+            if(resultado){
+                println("Correo: ${_email} Contraseña: ${_password}");
+            }
+        }
     }
 
 
