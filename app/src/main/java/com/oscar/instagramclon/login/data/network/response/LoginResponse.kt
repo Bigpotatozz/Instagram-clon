@@ -1,6 +1,7 @@
 package com.oscar.instagramclon.login.data.network.response
 
-import com.google.gson.annotations.SerializedName
+sealed class LoginResponse {
 
-data class LoginResponse( @SerializedName("message")val message: String,
-                          @SerializedName("estatus") val estatus: Boolean){}
+    data class Success(val loginResult: LoginResult): LoginResponse();
+    data class Error(val errorResponse: ErrorResponse): LoginResponse();
+}

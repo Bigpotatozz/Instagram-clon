@@ -2,19 +2,58 @@ package com.oscar.instagramclon.login.data.network.response
 
 import com.oscar.instagramclon.core.network.RetrofitHelper
 import com.oscar.instagramclon.login.data.network.LoginClient
+import com.oscar.instagramclon.login.data.network.request.LoginRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import retrofit2.Response
 
 class LoginService {
 
    private val retrofit = RetrofitHelper.getRetrofit();
 
-    suspend fun doLogin(): Boolean{
-       return withContext(Dispatchers.IO){
-            val response = retrofit.create(LoginClient::class.java).loginFake()
-           response.body()?.estatus ?: false
+    suspend fun doLogin(): LoginResponse{
+        val apiService = retrofit.create(LoginClient::class.java);
+        try{
+           val response = withContext(Dispatchers.IO){
+               apiService.loginFake();
+            }
+
+            if(response.isSuccessful){
+                return response.body()!!;
+            }else{
+
+                throw HttpException(response);
+
+            }
+        }catch (error: Exception){
+            print(error.message)
+            throw error;
+        }
+    }
 
 
+    suspend fun doLoginReal(user: String, password: String): LoginResponse{
+
+        val apiService = retrofit.create(LoginClient::class.java);
+        try{
+
+            var loginRequest: LoginRequest = LoginRequest(user, password);
+
+            val response = withContext(Dispatchers.IO){
+                 apiService.login(loginRequest);
+            }
+
+            if(response.isSuccessful){
+                return LoginResponse.Success(LoginResult(response.message(), response.body()!!.usuario))
+            }else{
+                return LoginResponse.Error(ErrorResponse(response.message(), false));
+            }
+
+
+        }catch (error: HttpException){
+            print(error);
+            return LoginResponse.Error(ErrorResponse(error.message(), false));
         }
 
     }

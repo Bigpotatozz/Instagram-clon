@@ -93,7 +93,9 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel){
         })
         Spacer(Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
-        LogInButton(modifier, validacionLogin, loginViewModel)
+        LogInButton(modifier, validacionLogin){
+            loginViewModel.logIn(correo, password);
+        }
         Spacer(Modifier.size(8.dp))
         LoginDivider()
         FacebookLogin(Modifier.align(Alignment.CenterHorizontally));
@@ -154,7 +156,7 @@ fun ForgotPassword(modifier: Modifier){
 }
 
 @Composable
-fun LogInButton(modifier: Modifier,  loginValidation: Boolean, loginViewModel: LoginViewModel){
+fun LogInButton(modifier: Modifier,  loginValidation: Boolean, onClick: () -> Unit){
 
     OutlinedButton(modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(5.dp),
@@ -164,8 +166,7 @@ fun LogInButton(modifier: Modifier,  loginValidation: Boolean, loginViewModel: L
             contentColor = Color.White, containerColor = Color(0xFF4EA8E9),
             disabledContentColor = Color.White, disabledContainerColor = Color.Gray),
         onClick = {
-            loginViewModel.onLoginSelected();
-
+            onClick();
         }) {
         Text("Log In")
     }

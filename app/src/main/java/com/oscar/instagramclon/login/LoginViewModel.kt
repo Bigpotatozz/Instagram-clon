@@ -38,9 +38,13 @@ class LoginViewModel: ViewModel() {
         viewModelScope.launch {
             val resultado = loginUseCase.loginInvoke()
             println(resultado)
-            if(resultado){
-                println("Correo: ${_email} Contraseña: ${_password}");
-            }
+        }
+    }
+
+    fun logIn(user: String, password: String){
+        viewModelScope.launch {
+            val resultado = loginUseCase.loginRealInovoke(user, password);
+             println(resultado);
         }
     }
 
