@@ -1,22 +1,21 @@
 package com.oscar.instagramclon.login.data.network.response
 
-import com.oscar.instagramclon.core.network.RetrofitHelper
 import com.oscar.instagramclon.login.data.network.LoginClient
 import com.oscar.instagramclon.login.data.network.request.LoginRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import retrofit2.Response
+import retrofit2.Retrofit
+import javax.inject.Inject
 
-class LoginService {
 
-   private val retrofit = RetrofitHelper.getRetrofit();
+class LoginService @Inject constructor(private val loginClient: LoginClient){
 
     suspend fun doLogin(): LoginResponse{
-        val apiService = retrofit.create(LoginClient::class.java);
         try{
            val response = withContext(Dispatchers.IO){
-               apiService.loginFake();
+               loginClient.loginFake();
             }
 
             if(response.isSuccessful){
@@ -35,13 +34,13 @@ class LoginService {
 
     suspend fun doLoginReal(user: String, password: String): LoginResponse{
 
-        val apiService = retrofit.create(LoginClient::class.java);
+
         try{
 
             var loginRequest: LoginRequest = LoginRequest(user, password);
 
             val response = withContext(Dispatchers.IO){
-                 apiService.login(loginRequest);
+                 loginClient.login(loginRequest);
             }
 
             if(response.isSuccessful){

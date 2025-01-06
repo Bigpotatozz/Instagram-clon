@@ -7,12 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oscar.instagramclon.login.domain.LoginUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel: ViewModel() {
 
-    val loginUseCase = LoginUseCase();
-
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase): ViewModel() {
 
     private val _email = MutableLiveData<String>();
     var email: LiveData<String> = _email;

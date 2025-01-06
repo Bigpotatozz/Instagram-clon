@@ -2,10 +2,9 @@ package com.oscar.instagramclon.login.data.network
 
 import com.oscar.instagramclon.login.data.network.response.LoginResponse
 import com.oscar.instagramclon.login.data.network.response.LoginService
+import javax.inject.Inject
 
-class LoginRepository {
-
-    private val api = LoginService();
+class LoginRepository @Inject constructor(private val api: LoginService) {
 
     suspend fun doLogin(): LoginResponse{
         return api.doLogin()
